@@ -1,4 +1,4 @@
-package vm
+package vm_request
 
 type VMCreateRequestData struct {
 	UUID    string `json:"uuid"`
@@ -6,8 +6,4 @@ type VMCreateRequestData struct {
 	Memory  int    `json:"memory"`
 	Cores   int    `json:"cores"`
 	Balloon bool   `json:"balloon"`
-}
-
-func (s VMService) Create(data VMCreateRequestData) (success bool) {
-	return
 }

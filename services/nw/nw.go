@@ -1,7 +1,10 @@
 package nw
 
+import (
 
-import "raznar.id/vm-control-hypervisor-wrapper/base"
+
+	"raznar.id/vm-control-hypervisor-wrapper/services/base"
+)
 
 type NetworkService struct {
 	base.BaseService
@@ -12,5 +15,6 @@ func New(bs *base.BaseService) (service *NetworkService) {
 	service.URL = bs.URL
 	service.TokenID = bs.TokenID
 	service.TokenSecret = bs.TokenSecret
+	service.Client = bs.Client
 	return
 }
