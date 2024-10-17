@@ -1,9 +1,11 @@
 package main
 
 import (
+	"os"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"raznar.id/vm-control-hypervisor-wrapper/interfaces/vm/vm_request"
 )
 
@@ -108,12 +110,20 @@ func (b VMTest) Start() (err error) {
 }
 
 func TestVM(t *testing.T) {
-	wrapper := New("http://15.235.160.20:8080", "cikoHNJOA2", "Caiktjhoi@tha@ithai@tha@izz")
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	apiURL := os.Getenv("API_URL")
+	apiTokenID := os.Getenv("API_TOKEN_ID")
+	apiToken := os.Getenv("API_TOKEN")
+	wrapper := New(apiURL, apiTokenID, apiToken)
 	vmTest := VMTest{}
 	vmTest.wrapper = wrapper
 	vmTest.t = t
 
-	err := vmTest.Start()
+	err = vmTest.Start()
 	if err != nil {
 		panic(err)
 	}

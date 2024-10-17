@@ -1,7 +1,10 @@
 package main
 
 import (
+	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
 
 type IMGTest struct {
@@ -30,12 +33,20 @@ func (b IMGTest) Start() (err error) {
 }
 
 func TestIMG(t *testing.T) {
-	wrapper := New("http://15.235.160.20:8080", "cikoHNJOA2", "Caiktjhoi@tha@ithai@tha@izz")
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	apiURL := os.Getenv("API_URL")
+	apiTokenID := os.Getenv("API_TOKEN_ID")
+	apiToken := os.Getenv("API_TOKEN")
+	wrapper := New(apiURL, apiTokenID, apiToken)
 	imgTest := IMGTest{}
 	imgTest.wrapper = wrapper
 	imgTest.t = t
 
-	err := imgTest.Start()
+	err = imgTest.Start()
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
 
 type NWTest struct {
@@ -53,12 +56,20 @@ func (b NWTest) Start() (err error) {
 }
 
 func TestNW(t *testing.T) {
-	wrapper := New("http://15.235.160.20:8080", "cikoHNJOA2", "Caiktjhoi@tha@ithai@tha@izz")
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	apiURL := os.Getenv("API_URL")
+	apiTokenID := os.Getenv("API_TOKEN_ID")
+	apiToken := os.Getenv("API_TOKEN")
+	wrapper := New(apiURL, apiTokenID, apiToken)
 	nwTest := NWTest{}
 	nwTest.wrapper = wrapper
 	nwTest.t = t
 
-	err := nwTest.Start()
+	err = nwTest.Start()
 	if err != nil {
 		panic(err)
 	}
