@@ -59,9 +59,9 @@ func (s NetworkService) Create(ipv4 string, macid string) (success bool, err err
 }
 
 func (s NetworkService) CreateMultiple(ipv4List []string, macid string) (success bool, err error) {
-	baseURL := constants.ROUTE_NW
+	baseURL := fmt.Sprintf("%s/multiple", constants.ROUTE_NW)
 	params := url.Values{}
-	params.Add("ipv4_list", strings.Join(ipv4List, ","))
+	params.Add("ipv4-list", strings.Join(ipv4List, ","))
 	params.Add("macid", macid)
 
 	// Create the full request URL

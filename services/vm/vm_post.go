@@ -14,7 +14,7 @@ func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, er
 		return
 	}
 
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s", constants.ROUTE_VM, data.UUID), body)
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, constants.ROUTE_VM, body)
 	if err != nil {
 		return
 	}
