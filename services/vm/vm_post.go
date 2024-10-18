@@ -3,9 +3,9 @@ package vm
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_response"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/interfaces/vm/vm_request"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/interfaces/vm/vm_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/pkg/constants"
 )
 
 func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, err error) {

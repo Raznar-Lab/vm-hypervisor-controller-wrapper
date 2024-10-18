@@ -1,4 +1,4 @@
-module github.com/Raznar-Lab/vm-hypervisor-controller-wrapper
+module github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1
 
 go 1.22.2
 

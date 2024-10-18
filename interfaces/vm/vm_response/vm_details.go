@@ -1,6 +1,6 @@
 package vm_response
 
-import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/base_response"
+import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/interfaces/vm/base_response"
 
 type VMDetailsResponseData struct {
 	base_response.BaseResponse

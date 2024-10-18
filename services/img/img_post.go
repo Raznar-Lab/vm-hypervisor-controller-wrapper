@@ -2,7 +2,7 @@ package img
 
 import (
 	"fmt"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/pkg/constants"
 	"net/url"
 )
 
