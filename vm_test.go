@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
-	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/interfaces/vm/vm_request"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
 )
 
 type VMTest struct {
