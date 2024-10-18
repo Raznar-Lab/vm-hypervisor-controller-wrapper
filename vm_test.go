@@ -1,8 +1,9 @@
-package main
+package hypervisor_controller_wrapper
 
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
@@ -37,6 +38,7 @@ func (b VMTest) Start() (err error) {
 
 	b.t.Log("Successfully created the server")
 
+	time.Sleep(100 * time.Millisecond)
 	// Installing OS
 	b.t.Log("Installing OS on the server")
 	success, err = vmService.InstallOS(uuidStr, vm_request.VMInstallOSRequestData{

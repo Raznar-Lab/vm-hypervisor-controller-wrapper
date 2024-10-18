@@ -1,8 +1,10 @@
 package vm_response
 
+import "raznar.id/vm-control-hypervisor-wrapper/interfaces/vm/base_response"
+
 type VMDetailsResponseData struct {
-	Status int           `json:"status"`
-	Data   vmDetailsData `json:"data"`
+	base_response.BaseResponse 
+	Data vmDetailsData `json:"data"`
 }
 
 type vmDetailsData struct {

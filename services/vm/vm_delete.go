@@ -12,16 +12,16 @@ func (s VMService) Delete(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
 
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
 
 	success = true
 	return

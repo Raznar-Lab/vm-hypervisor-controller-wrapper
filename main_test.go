@@ -1,4 +1,4 @@
-package main
+package hypervisor_controller_wrapper
 
 import "testing"
 

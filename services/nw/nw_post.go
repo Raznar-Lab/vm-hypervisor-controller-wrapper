@@ -18,10 +18,10 @@ func (s NetworkService) Reset() (success bool, err error) {
 	if err != nil {
 		return
 	}
-	defer res.Body.Close() // Ensure the response body is closed
+	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
 		return
 	}
 
@@ -47,10 +47,10 @@ func (s NetworkService) Create(ipv4 string, macid string) (success bool, err err
 	if err != nil {
 		return
 	}
-	defer res.Body.Close() // Ensure the response body is closed
+	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
 		return
 	}
 
@@ -76,10 +76,10 @@ func (s NetworkService) CreateMultiple(ipv4List []string, macid string) (success
 	if err != nil {
 		return
 	}
-	defer res.Body.Close() // Ensure the response body is closed
+	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
 		return
 	}
 

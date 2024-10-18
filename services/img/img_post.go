@@ -25,10 +25,10 @@ func (s ImageService) Download(downloadURL string, filename string) (success boo
 	if err != nil {
 		return
 	}
-	defer res.Body.Close() // Ensure the response body is closed
+	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
 		return
 	}
 

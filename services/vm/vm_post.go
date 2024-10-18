@@ -20,16 +20,14 @@ func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, er
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -42,16 +40,14 @@ func (s VMService) Start(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -64,16 +60,14 @@ func (s VMService) Restart(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -86,38 +80,34 @@ func (s VMService) Stop(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
 }
 
 func (s VMService) ForceStop(uuid string) (success bool, err error) {
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/foce-stop", constants.ROUTE_VM, uuid), nil)
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/force-stop", constants.ROUTE_VM, uuid), nil)
 	if err != nil {
 		return
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -130,16 +120,14 @@ func (s VMService) Suspend(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -152,16 +140,14 @@ func (s VMService) Unsuspend(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -174,16 +160,14 @@ func (s VMService) LinkDisks(uuid string) (success bool, err error) {
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -196,16 +180,11 @@ func (s VMService) ResetPassword(uuid string) (resData *vm_response.VMResetPassw
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_OK.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_OK, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+
 	resData = &vm_response.VMResetPasswordResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)
 	if err != nil {
@@ -213,6 +192,7 @@ func (s VMService) ResetPassword(uuid string) (resData *vm_response.VMResetPassw
 		return
 	}
 
+	err = s.HandleErrorResponse(&resData.BaseResponse, constants.HTTP_STATUS_OK.Integer())
 	return
 }
 
@@ -228,16 +208,14 @@ func (s VMService) SetupNetwork(uuid string, data vm_request.VMSetupNetworkReque
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -255,16 +233,14 @@ func (s VMService) InstallOS(uuid string, data vm_request.VMInstallOSRequestData
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return
@@ -276,23 +252,20 @@ func (s VMService) SwitchBootMode(uuid string, data vm_request.VMBootModeRequest
 		return
 	}
 
-	fmt.Println(string(body))
 	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/boot-mode", constants.ROUTE_VM, uuid), body)
 	if err != nil {
 		return
 	}
 
 	res, err := s.Client.Do(r)
-	if res.StatusCode != constants.HTTP_STATUS_NO_CONTENT.Integer() {
-		if err != nil {
-			return
-		}
-
-		err = fmt.Errorf("unexpected result, expected %d but received %d (%s)", constants.HTTP_STATUS_NO_CONTENT, res.StatusCode, res.Status)
+	if err != nil {
 		return
 	}
 
-	defer res.Body.Close()
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
 
 	success = true
 	return

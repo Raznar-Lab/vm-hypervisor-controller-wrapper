@@ -20,10 +20,6 @@ func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsRespon
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_OK.Integer() {
-		// Handle non-200 responses
-		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
-	}
 
 	resData = &vm_response.VMDetailsResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)
@@ -32,6 +28,7 @@ func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsRespon
 		return
 	}
 
+	err = s.HandleErrorResponse(&resData.BaseResponse, constants.HTTP_STATUS_OK.Integer())
 	return
 }
 
@@ -47,10 +44,7 @@ func (s VMService) GetMetrics(uuid string) (resData *vm_response.VMMetricsRespon
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != constants.HTTP_STATUS_OK.Integer() {
-		// Handle non-200 responses
-		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
-	}
+
 
 	resData = &vm_response.VMMetricsResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)
@@ -59,5 +53,6 @@ func (s VMService) GetMetrics(uuid string) (resData *vm_response.VMMetricsRespon
 		return
 	}
 
+	err = s.HandleErrorResponse(&resData.BaseResponse, constants.HTTP_STATUS_OK.Integer())
 	return
 }

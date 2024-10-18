@@ -1,8 +1,10 @@
 package vm_response
 
+import "raznar.id/vm-control-hypervisor-wrapper/interfaces/vm/base_response"
+
 type VMResetPasswordResponseData struct {
-	Status int                 `json:"status"`
-	Data   vmResetPasswordData `json:"data"`
+	base_response.BaseResponse
+	Data vmResetPasswordData `json:"data"`
 }
 
 type vmResetPasswordData struct {
