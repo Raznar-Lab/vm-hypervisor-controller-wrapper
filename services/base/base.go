@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/base_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/interfaces/vm/base_response"
 )
 
 type BaseService struct {

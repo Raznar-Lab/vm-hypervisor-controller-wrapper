@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_response"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/interfaces/vm/vm_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/pkg/constants"
 )
 
 func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsResponseData, err error) {
@@ -19,7 +19,6 @@ func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsRespon
 		return
 	}
 	defer res.Body.Close()
-
 
 	resData = &vm_response.VMDetailsResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)
@@ -43,8 +42,6 @@ func (s VMService) GetMetrics(uuid string) (resData *vm_response.VMMetricsRespon
 		return
 	}
 	defer res.Body.Close()
-
-
 
 	resData = &vm_response.VMMetricsResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)

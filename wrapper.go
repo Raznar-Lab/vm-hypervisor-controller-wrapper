@@ -1,11 +1,11 @@
 package hypervisor_controller_wrapper
 
 import (
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/services/base"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/services/img"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/services/nw"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/services/vm"
 	"net/http"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/base"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/img"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/nw"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/vm"
 )
 
 type Wrapper struct {

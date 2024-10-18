@@ -7,7 +7,6 @@ import (
 
 type BaseErrorResponse map[string]string
 
-
 func (bErr BaseErrorResponse) Source() string {
 	return bErr["source"]
 }

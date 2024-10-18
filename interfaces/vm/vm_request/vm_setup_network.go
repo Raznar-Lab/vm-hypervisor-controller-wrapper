@@ -1,6 +1,5 @@
 package vm_request
 
-
 type VMSetupNetworkRequestData struct {
 	OSType     string `json:"os_type"`
 	IPv4       string `json:"ipv4"`

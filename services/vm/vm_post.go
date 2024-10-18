@@ -3,9 +3,9 @@ package vm
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_response"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/interfaces/vm/vm_request"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/interfaces/vm/vm_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/pkg/constants"
 )
 
 func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, err error) {
@@ -183,7 +183,6 @@ func (s VMService) ResetPassword(uuid string) (resData *vm_response.VMResetPassw
 	if err != nil {
 		return
 	}
-
 
 	resData = &vm_response.VMResetPasswordResponseData{}
 	err = json.NewDecoder(res.Body).Decode(resData)

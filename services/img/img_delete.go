@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/pkg/constants"
 )
 
 func (s ImageService) Delete(filename string) (success bool, err error) {

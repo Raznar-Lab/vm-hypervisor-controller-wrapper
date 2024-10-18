@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/pkg/constants"
 )
 
 func (s NetworkService) Delete(ipv4 string, macid string) (success bool, err error) {
@@ -12,7 +12,6 @@ func (s NetworkService) Delete(ipv4 string, macid string) (success bool, err err
 	params := url.Values{}
 	params.Add("ipv4", ipv4)
 	params.Add("macid", macid)
-
 
 	// Create the full request URL
 	fullURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
