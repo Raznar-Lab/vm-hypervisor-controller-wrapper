@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"raznar.id/vm-control-hypervisor-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/pkg/constants"
 )
 
 func (s NetworkService) Reset() (success bool, err error) {

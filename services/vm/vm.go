@@ -2,7 +2,7 @@ package vm
 
 import (
 	"net/http"
-	"raznar.id/vm-control-hypervisor-wrapper/services/base"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/services/base"
 )
 
 type VMService struct {

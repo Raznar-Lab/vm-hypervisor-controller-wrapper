@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"raznar.id/vm-control-hypervisor-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/pkg/constants"
 )
 
 func (s NetworkService) Delete(ipv4 string, macid string) (success bool, err error) {

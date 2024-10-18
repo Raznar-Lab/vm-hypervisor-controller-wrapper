@@ -2,7 +2,7 @@ package vm
 
 import (
 	"fmt"
-	"raznar.id/vm-control-hypervisor-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/pkg/constants"
 )
 
 func (s VMService) Delete(uuid string) (success bool, err error) {

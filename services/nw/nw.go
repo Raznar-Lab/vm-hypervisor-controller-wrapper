@@ -3,7 +3,7 @@ package nw
 import (
 
 
-	"raznar.id/vm-control-hypervisor-wrapper/services/base"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/services/base"
 )
 
 type NetworkService struct {

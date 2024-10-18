@@ -3,7 +3,7 @@ package img
 import (
 	"fmt"
 	"net/url"
-	"raznar.id/vm-control-hypervisor-wrapper/pkg/constants"
+	"github.com/Raznar-Lab/vm-control-hypervisor-wrapper/pkg/constants"
 )
 
 func (s ImageService) Download(downloadURL string, filename string) (success bool, err error) {
