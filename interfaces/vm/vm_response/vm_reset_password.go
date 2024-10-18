@@ -1,6 +1,6 @@
 package vm_response
 
-import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/interfaces/vm/base_response"
+import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/base_response"
 
 type VMResetPasswordResponseData struct {
 	base_response.BaseResponse

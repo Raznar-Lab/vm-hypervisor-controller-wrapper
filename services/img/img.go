@@ -1,6 +1,6 @@
 package img
 
-import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/dev/services/base"
+import "github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/base"
 
 type ImageService struct {
 	base.BaseService
