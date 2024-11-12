@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/interfaces/vm/vm_response"
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/pkg/constants"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
 )
 
 func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsResponseData, err error) {

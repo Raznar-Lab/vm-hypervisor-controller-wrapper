@@ -1,7 +1,7 @@
 package vm
 
 import (
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/v1/services/base"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/base"
 	"net/http"
 )
 
