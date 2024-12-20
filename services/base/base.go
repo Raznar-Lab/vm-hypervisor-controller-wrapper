@@ -12,7 +12,6 @@ import (
 
 type BaseService struct {
 	URL         string
-	TokenID     string
 	TokenSecret string
 	Client      *http.Client
 }
@@ -24,7 +23,7 @@ func (s BaseService) NewHttpRequest(method string, endpoint string, body []byte)
 	}
 
 	r.Header.Add("Content-Type", "application/json")
-	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s=%s", s.TokenID, s.TokenSecret))
+	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", s.TokenSecret))
 
 	return
 }

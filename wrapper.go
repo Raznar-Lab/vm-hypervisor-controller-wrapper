@@ -12,10 +12,9 @@ type Wrapper struct {
 	base.BaseService
 }
 
-func New(url string, tokenId string, tokenSecret string) (wrapper *Wrapper) {
+func New(url string, tokenSecret string) (wrapper *Wrapper) {
 	wrapper = &Wrapper{}
 	wrapper.URL = url
-	wrapper.TokenID = tokenId
 	wrapper.TokenSecret = tokenSecret
 	wrapper.Client = http.DefaultClient
 	return

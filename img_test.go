@@ -39,9 +39,8 @@ func TestIMG(t *testing.T) {
 	}
 
 	apiURL := os.Getenv("API_URL")
-	apiTokenID := os.Getenv("API_TOKEN_ID")
 	apiToken := os.Getenv("API_TOKEN")
-	wrapper := New(apiURL, apiTokenID, apiToken)
+	wrapper := New(apiURL, apiToken)
 	imgTest := IMGTest{}
 	imgTest.wrapper = wrapper
 	imgTest.t = t
