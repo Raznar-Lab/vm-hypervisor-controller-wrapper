@@ -7,13 +7,24 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/base_response"
+	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/base_response"
 )
 
 type BaseService struct {
 	URL         string
 	TokenSecret string
 	Client      *http.Client
+}
+
+func (s BaseService) NewHttpRequestJSON(method string, endpoint string, body any) (r *http.Request, err error) {
+
+	resBody, err := json.Marshal(body)
+	if err != nil {
+		return
+	}
+
+	r, err = s.NewHttpRequest(method, endpoint, resBody)
+	return
 }
 
 func (s BaseService) NewHttpRequest(method string, endpoint string, body []byte) (r *http.Request, err error) {
@@ -42,8 +53,11 @@ func (s BaseService) HandleErrorResponseNonBody(res *http.Response, expectedStat
 }
 
 func (s BaseService) HandleErrorResponse(res *base_response.BaseResponse, expectedStatus int) (err error) {
-	if res.Status != expectedStatus {
-		return fmt.Errorf("unexpected result, expected %d but received %d - %s", expectedStatus, res.Status, res.Errors.GetAllString())
+	if res.Code != expectedStatus {
+		if res.Errors == nil {
+			return fmt.Errorf("unexpected result, expected %d but received %d", expectedStatus, res.Code)
+		}
+		return fmt.Errorf("unexpected result, expected %d but received %d - %s", expectedStatus, res.Code, res.Errors.GetAllString())
 	}
 
 	return nil

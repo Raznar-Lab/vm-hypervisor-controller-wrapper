@@ -1,6 +1,6 @@
 package base_response
 
 type BaseResponse struct {
-	Status int                `json:"status"`
+	Code   int                `json:"code"`
 	Errors *BaseErrorResponse `json:"errors"`
 }

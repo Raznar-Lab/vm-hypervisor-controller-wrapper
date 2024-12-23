@@ -3,18 +3,34 @@ package vm
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_response"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
 )
 
 func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, err error) {
-	body, err := json.Marshal(data)
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, constants.ROUTE_VM, data)
 	if err != nil {
 		return
 	}
 
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, constants.ROUTE_VM, body)
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
+
+	success = true
+	return
+}
+
+func (s VMService) IncreaseDiskSize(uuid string, data vm_request.VMIncreaseDiskSize) (success bool, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/increase-disk", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
@@ -173,8 +189,8 @@ func (s VMService) LinkDisks(uuid string) (success bool, err error) {
 	return
 }
 
-func (s VMService) ResetPassword(uuid string) (resData *vm_response.VMResetPasswordResponseData, err error) {
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/reset-password", constants.ROUTE_VM, uuid), nil)
+func (s VMService) ResetPassword(uuid string, data vm_request.VMResetPasswordRequestData) (resData *vm_response.VMResetPasswordResponseData, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/reset-password", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
@@ -196,12 +212,7 @@ func (s VMService) ResetPassword(uuid string) (resData *vm_response.VMResetPassw
 }
 
 func (s VMService) SetupNetwork(uuid string, data vm_request.VMSetupNetworkRequestData) (success bool, err error) {
-	body, err := json.Marshal(data)
-	if err != nil {
-		return
-	}
-
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/setup-network", constants.ROUTE_VM, uuid), body)
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/setup-network", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
@@ -211,7 +222,7 @@ func (s VMService) SetupNetwork(uuid string, data vm_request.VMSetupNetworkReque
 		return
 	}
 
-	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_OK.Integer())
 	if err != nil {
 		return false, err
 	}
@@ -221,12 +232,7 @@ func (s VMService) SetupNetwork(uuid string, data vm_request.VMSetupNetworkReque
 }
 
 func (s VMService) InstallOS(uuid string, data vm_request.VMInstallOSRequestData) (success bool, err error) {
-	body, err := json.Marshal(data)
-	if err != nil {
-		return
-	}
-
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/install-os", constants.ROUTE_VM, uuid), body)
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/install-os", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
@@ -246,12 +252,7 @@ func (s VMService) InstallOS(uuid string, data vm_request.VMInstallOSRequestData
 }
 
 func (s VMService) SwitchBootMode(uuid string, data vm_request.VMBootModeRequestData) (success bool, err error) {
-	body, err := json.Marshal(data)
-	if err != nil {
-		return
-	}
-
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/boot-mode", constants.ROUTE_VM, uuid), body)
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/boot-mode", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
