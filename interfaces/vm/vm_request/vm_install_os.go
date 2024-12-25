@@ -1,7 +1,8 @@
 package vm_request
 
 type VMInstallOSRequestData struct {
-	OSFile        string `json:"os_file"`
+	Label         string `json:"label"`
+	ImageFile     string `json:"image_file"`
 	StorageTarget string `json:"storage_target"`
-	DiskSize      int64  `json:"disk_size"`
+	DiskSize      int    `json:"disk_size"`
 }

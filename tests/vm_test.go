@@ -1,11 +1,11 @@
 package tests
 
 import (
-	"testing"
-	"time"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/vm"
 	"github.com/google/uuid"
+	"testing"
+	"time"
 )
 
 type VMTest struct {
@@ -21,16 +21,16 @@ func (b VMTest) Start() (err error) {
 	uuidStr := uuid.NewString()
 	vmService := b.wrapper.VM()
 
-	defer func() {
-		if deleteErr := b.deleteServer(vmService, uuidStr); deleteErr != nil {
-			b.t.Logf("Error deleting server: %v", deleteErr)
-		}
-	}()
-
+	var passed uint 
 	tests := []vmUnitTest{
 		{"Create Server", b.createServer},
+		{"Create OS Disk", b.createOsDisk},
+		{"Create Second Disk", b.createSecondDisk},
 		{"Install OS", b.installOS},
-		{"Increase Disk Size", b.increaseDiskSize},
+		{"Increase Second Disk Size", b.increaseSecondDiskSize},
+		{"Resize OS Disk", b.resizeOsDisk},
+		{"Delete Second Disk", b.deleteSecondDisk},
+		{"Link Disks", b.linkDisks},
 		{"Switch to Recovery Mode", b.switchToRecoveryMode},
 		{"Switch to OS Boot Mode", b.switchToOSBootMode},
 		{"Get Details", b.getDetails},
@@ -39,15 +39,27 @@ func (b VMTest) Start() (err error) {
 		{"Setup Network", b.setupNetwork},
 		{"Restart Server", b.restart},
 		{"Suspend Server", b.suspend},
-		{"Suspend Server", b.unsuspend},
+		{"Unsuspend Server", b.unsuspend},
 		{"Stop Server", b.stop},
 	}
+
+	defer func() {
+		if deleteErr := b.deleteServer(vmService, uuidStr); deleteErr != nil {
+			b.t.Logf("Error deleting server: %v", deleteErr)
+		}
+
+		b.t.Logf("Passed %d of %d unit tests", passed, len(tests))
+	}()
+
+
 
 	for _, test := range tests {
 		if err = test.Fn(vmService, uuidStr); err != nil {
 			b.t.Logf("Error during %s: %v", test.Name, err)
 			return err
 		}
+
+		passed++
 	}
 
 	return nil
@@ -72,14 +84,16 @@ func (b VMTest) createServer(vmService *vm.VMService, uuidStr string) (err error
 		return nil
 	}
 	b.t.Log("Server created successfully")
+
+	time.Sleep(100 * time.Millisecond)
 	return nil
 }
-
 func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Installing OS on server:", uuidStr)
 	success, err := vmService.InstallOS(uuidStr, vm_request.VMInstallOSRequestData{
-		OSFile:        "debian-12-amd64.qcow2",
+		Label:         "os",
+		ImageFile:     "debian-12-amd64.qcow2",
 		StorageTarget: "local",
 		DiskSize:      5,
 	})
@@ -96,27 +110,122 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	return nil
 }
 
-func (b VMTest) increaseDiskSize(vmService *vm.VMService, uuidStr string) (err error) {
-	b.t.Log("Increasing disk size for server:", uuidStr)
+func (b VMTest) increaseSecondDiskSize(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Increasing second disk size for server:", uuidStr)
 	success, err := vmService.IncreaseDiskSize(uuidStr, vm_request.VMIncreaseDiskSize{
-		Size: 1,
+		Label: "second",
+		Size:  1,
 	})
 
 	if err != nil {
-		b.t.Logf("Error increasing disk size: %v", err)
+		b.t.Logf("Error increasing second disk size: %v", err)
 		return err
 	}
 	if !success {
-		b.t.Log("Disk size increase failed")
+		b.t.Log("Second disk size increase failed")
 		return nil
 	}
-	b.t.Log("Disk size increased successfully")
+	b.t.Log("Second disk size increased successfully")
+	return nil
+}
+
+func (b VMTest) createOsDisk(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Creating OS disk for server:", uuidStr)
+	success, err := vmService.CreateDisk(uuidStr, vm_request.VMCreateDisk{
+		Size:          5,
+		StorageTarget: "local",
+		Label:         "os",
+	})
+
+	if err != nil {
+		b.t.Logf("Error creating OS disk: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("OS disk creation failed")
+		return nil
+	}
+	b.t.Log("OS disk created successfully")
+	return nil
+}
+
+func (b VMTest) resizeOsDisk(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Resizing OS disk for server:", uuidStr)
+	success, err := vmService.ResizeDiskSize(uuidStr, vm_request.VMResizeDiskSize{
+		Label: "os",
+		Size:  10,
+	})
+
+	if err != nil {
+		b.t.Logf("Error resizing OS disk: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("OS disk resize failed")
+		return nil
+	}
+	b.t.Log("OS disk resized successfully")
+	return nil
+}
+
+func (b VMTest) createSecondDisk(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Creating second disk for server:", uuidStr)
+	success, err := vmService.CreateDisk(uuidStr, vm_request.VMCreateDisk{
+		Size:          5,
+		StorageTarget: "local",
+		Label:         "second",
+	})
+
+	if err != nil {
+		b.t.Logf("Error creating second disk: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("Second disk creation failed")
+		return nil
+	}
+	b.t.Log("Second disk created successfully")
+	return nil
+}
+
+func (b VMTest) deleteSecondDisk(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Deleting second disk for server:", uuidStr)
+	success, err := vmService.DeleteDisk(uuidStr, vm_request.VMDeleteDisk{
+		Label: "second",
+	})
+
+	if err != nil {
+		b.t.Logf("Error deleting second disk: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("Second disk deletion failed")
+		return nil
+	}
+	b.t.Log("Second disk deleted successfully")
+	return nil
+}
+
+func (b VMTest) linkDisks(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Linking disks for server:", uuidStr)
+	success, err := vmService.LinkDisks(uuidStr)
+
+	if err != nil {
+		b.t.Logf("Error linking disks: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("Disk linking failed")
+		return nil
+	}
+	b.t.Log("Disks linked successfully")
 	return nil
 }
 
 func (b VMTest) switchToRecoveryMode(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Switching boot mode to recovery on server:", uuidStr)
 	success, err := vmService.SwitchBootMode(uuidStr, vm_request.VMBootModeRequestData{
+		BootDiskLabel:       "os",
 		BootMode:            "recovery",
 		BootRecoveryImage:   "debian-12-amd64.qcow2",
 		BootRecoveryStorage: "local",
@@ -137,7 +246,8 @@ func (b VMTest) switchToRecoveryMode(vmService *vm.VMService, uuidStr string) (e
 func (b VMTest) switchToOSBootMode(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Switching boot mode back to OS on server:", uuidStr)
 	success, err := vmService.SwitchBootMode(uuidStr, vm_request.VMBootModeRequestData{
-		BootMode: "os",
+		BootDiskLabel: "os",
+		BootMode:      "os",
 	})
 
 	if err != nil {
@@ -320,7 +430,7 @@ func TestVM(t *testing.T) {
 		t.Fatalf("cannot load wrapper!: %s", err.Error())
 		return
 	}
-	
+
 	vmTest := VMTest{}
 	vmTest.wrapper = wrapper
 	vmTest.t = t

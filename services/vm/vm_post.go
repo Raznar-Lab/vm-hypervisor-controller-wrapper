@@ -30,7 +30,67 @@ func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, er
 }
 
 func (s VMService) IncreaseDiskSize(uuid string, data vm_request.VMIncreaseDiskSize) (success bool, err error) {
-	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/increase-disk", constants.ROUTE_VM, uuid), data)
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk/increase", constants.ROUTE_VM, uuid), data)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
+
+	success = true
+	return
+}
+
+func (s VMService) ResizeDiskSize(uuid string, data vm_request.VMResizeDiskSize) (success bool, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk/resize", constants.ROUTE_VM, uuid), data)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
+
+	success = true
+	return
+}
+
+func (s VMService) CreateDisk(uuid string, data vm_request.VMCreateDisk) (success bool, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk", constants.ROUTE_VM, uuid), data)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
+
+	success = true
+	return
+}
+
+func (s VMService) DeleteDisk(uuid string, data vm_request.VMDeleteDisk) (success bool, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk/delete", constants.ROUTE_VM, uuid), data)
 	if err != nil {
 		return
 	}
@@ -170,7 +230,7 @@ func (s VMService) Unsuspend(uuid string) (success bool, err error) {
 }
 
 func (s VMService) LinkDisks(uuid string) (success bool, err error) {
-	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/link-disks", constants.ROUTE_VM, uuid), nil)
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk/link", constants.ROUTE_VM, uuid), nil)
 	if err != nil {
 		return
 	}
