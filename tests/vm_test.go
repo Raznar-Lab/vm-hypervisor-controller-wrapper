@@ -21,7 +21,7 @@ func (b VMTest) Start() (err error) {
 	uuidStr := uuid.NewString()
 	vmService := b.wrapper.VM()
 
-	var passed uint 
+	var passed uint
 	tests := []vmUnitTest{
 		{"Create Server", b.createServer},
 		{"Create OS Disk", b.createOsDisk},
@@ -29,6 +29,8 @@ func (b VMTest) Start() (err error) {
 		{"Install OS", b.installOS},
 		{"Increase Second Disk Size", b.increaseSecondDiskSize},
 		{"Resize OS Disk", b.resizeOsDisk},
+		{"Switch Boot to Second", b.switchToOSTOSecond},
+		{"Switch Boot to Primary", b.switchToOSBootMode},
 		{"Delete Second Disk", b.deleteSecondDisk},
 		{"Link Disks", b.linkDisks},
 		{"Switch to Recovery Mode", b.switchToRecoveryMode},
@@ -50,8 +52,6 @@ func (b VMTest) Start() (err error) {
 
 		b.t.Logf("Passed %d of %d unit tests", passed, len(tests))
 	}()
-
-
 
 	for _, test := range tests {
 		if err = test.Fn(vmService, uuidStr); err != nil {
@@ -259,6 +259,26 @@ func (b VMTest) switchToOSBootMode(vmService *vm.VMService, uuidStr string) (err
 		return nil
 	}
 	b.t.Log("Switched to OS mode successfully")
+	return nil
+}
+
+func (b VMTest) switchToOSTOSecond(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Switching second disk to primary:", uuidStr)
+	success, err := vmService.SwitchBootMode(uuidStr, vm_request.VMBootModeRequestData{
+		BootDiskLabel: "second",
+		BootMode:      "os",
+	})
+
+	if err != nil {
+		b.t.Logf("Error switching boot mode to second disk: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("Switch to second disk failed")
+		return nil
+	}
+	b.t.Log("Switched to second disk successfully")
+	time.Sleep(2500 * time.Millisecond)
 	return nil
 }
 
