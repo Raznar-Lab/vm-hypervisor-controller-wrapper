@@ -77,7 +77,7 @@ func TestIMG(t *testing.T) {
 		t.Fatalf("cannot load wrapper!: %s", err.Error())
 		return
 	}
-	
+
 	imgTest := IMGTest{
 		BaseTest: BaseTest{
 			wrapper: wrapper,

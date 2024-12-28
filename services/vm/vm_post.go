@@ -9,7 +9,7 @@ import (
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
 )
 
-func (s VMService) Create(data vm_request.VMCreateRequestData) (success bool, err error) {
+func (s VMService) Create(data vm_request.VMCreateData) (success bool, err error) {
 	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, constants.ROUTE_VM, data)
 	if err != nil {
 		return

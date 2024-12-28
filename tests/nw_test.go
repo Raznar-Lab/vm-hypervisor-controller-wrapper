@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"testing"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/nw"
+	"testing"
 )
 
 type NWTest struct {

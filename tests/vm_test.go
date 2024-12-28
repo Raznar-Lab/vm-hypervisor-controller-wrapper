@@ -1,11 +1,12 @@
 package tests
 
 import (
+	"testing"
+	"time"
+
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/interfaces/vm/vm_request"
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/services/vm"
 	"github.com/google/uuid"
-	"testing"
-	"time"
 )
 
 type VMTest struct {
@@ -24,6 +25,7 @@ func (b VMTest) Start() (err error) {
 	var passed uint
 	tests := []vmUnitTest{
 		{"Create Server", b.createServer},
+		{"Update Server", b.updateServer},
 		{"Create OS Disk", b.createOsDisk},
 		{"Create Second Disk", b.createSecondDisk},
 		{"Install OS", b.installOS},
@@ -50,7 +52,7 @@ func (b VMTest) Start() (err error) {
 			b.t.Logf("Error deleting server: %v", deleteErr)
 		}
 
-		b.t.Logf("Passed %d of %d unit tests", passed, len(tests))
+		b.t.Logf("Passed %d of %d server unit tests", passed, len(tests))
 	}()
 
 	for _, test := range tests {
@@ -67,7 +69,7 @@ func (b VMTest) Start() (err error) {
 
 func (b VMTest) createServer(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Creating server with UUID:", uuidStr)
-	success, err := vmService.Create(vm_request.VMCreateRequestData{
+	success, err := vmService.Create(vm_request.VMCreateData{
 		UUID:    uuidStr,
 		MacId:   "02:00:00:7d:a8:ad",
 		Memory:  2048,
@@ -88,6 +90,33 @@ func (b VMTest) createServer(vmService *vm.VMService, uuidStr string) (err error
 	time.Sleep(100 * time.Millisecond)
 	return nil
 }
+
+func (b VMTest) updateServer(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Updating server with UUID:", uuidStr)
+	updateData := vm_request.VMUpdateData{
+		MacId:       "02:00:00:7d:a8:ab",
+		Memory:      4096,
+		Cores:       3,
+		NetworkRate: 20,
+	}
+
+	updateData.SetBaloon(true)
+	success, err := vmService.Update(uuidStr, updateData)
+
+	if err != nil {
+		b.t.Logf("Error updating server: %v", err)
+		return err
+	}
+	if !success {
+		b.t.Log("Server update failed")
+		return nil
+	}
+	b.t.Log("Server updated successfully")
+
+	time.Sleep(100 * time.Millisecond)
+	return nil
+}
+
 func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Installing OS on server:", uuidStr)
@@ -429,6 +458,7 @@ func (b VMTest) stop(vmService *vm.VMService, uuidStr string) (err error) {
 
 func (b VMTest) deleteServer(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Deleting server:", uuidStr)
+	time.Sleep(2 * time.Second)
 	success, err := vmService.Delete(uuidStr)
 
 	if err != nil {
