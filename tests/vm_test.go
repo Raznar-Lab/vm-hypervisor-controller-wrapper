@@ -121,10 +121,8 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Installing OS on server:", uuidStr)
 	success, err := vmService.InstallOS(uuidStr, vm_request.VMInstallOSRequestData{
-		Label:         "os",
+		DiskLabel:     "os",
 		ImageFile:     "debian-12-amd64.qcow2",
-		StorageTarget: "local",
-		DiskSize:      5,
 	})
 
 	if err != nil {
