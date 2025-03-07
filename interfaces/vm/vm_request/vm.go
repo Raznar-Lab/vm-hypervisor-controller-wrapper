@@ -17,6 +17,6 @@ type VMUpdateData struct {
 	NetworkRate int64  `json:"network_rate"`
 }
 
-func (d VMUpdateData) SetBaloon(value bool) {
+func (d *VMUpdateData) SetBaloon(value bool) {
 	d.Balloon = &value
 }
