@@ -29,6 +29,27 @@ func (s VMService) Create(data vm_request.VMCreateData) (success bool, err error
 	return
 }
 
+func (s VMService) SendCommand(uuid string, data vm_request.VMSendCommandRequestData) (resultData vm_response.VMSendCommandResponseData, err error) {
+	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/send-command", constants.ROUTE_VM, uuid), data)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	
+	err = json.NewDecoder(res.Body).Decode(&resultData)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponse(&resultData.BaseResponse, constants.HTTP_STATUS_OK.Integer())
+	return
+}
+
 func (s VMService) IncreaseDiskSize(uuid string, data vm_request.VMIncreaseDiskSize) (success bool, err error) {
 	r, err := s.NewHttpRequestJSON(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disk/increase", constants.ROUTE_VM, uuid), data)
 	if err != nil {

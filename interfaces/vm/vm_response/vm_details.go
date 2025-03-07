@@ -88,3 +88,4 @@ type detailsBlockStat struct {
 	RdOperations                int   `json:"rd_operations"`
 	WrOperations                int   `json:"wr_operations"`
 }
+

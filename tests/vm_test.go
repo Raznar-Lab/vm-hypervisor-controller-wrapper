@@ -41,6 +41,7 @@ func (b VMTest) Start() (err error) {
 		{"Start Server", b.start},
 		{"Reset Password", b.resetPassword},
 		{"Setup Network", b.setupNetwork},
+		{"Send Command", b.sendCommand},
 		{"Restart Server", b.restart},
 		{"Suspend Server", b.suspend},
 		{"Unsuspend Server", b.unsuspend},
@@ -121,7 +122,7 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Installing OS on server:", uuidStr)
 	success, err := vmService.InstallOS(uuidStr, vm_request.VMInstallOSRequestData{
-		ImageFile:     "debian-12-amd64.qcow2",
+		ImageFile: "debian-12-amd64.qcow2",
 	})
 
 	if err != nil {
@@ -467,6 +468,26 @@ func (b VMTest) deleteServer(vmService *vm.VMService, uuidStr string) (err error
 		return nil
 	}
 	b.t.Log("Server deleted successfully")
+	return nil
+}
+
+func (b VMTest) sendCommand(vmService *vm.VMService, uuidStr string) (err error) {
+	b.t.Log("Sending command:", uuidStr)
+	time.Sleep(500 * time.Millisecond)
+	result, err := vmService.SendCommand(uuidStr, vm_request.VMSendCommandRequestData{
+		Command: []string{"echo anjay anjay"},
+	})
+
+	if err != nil {
+		b.t.Logf("Error sending server command: %v", err)
+		return err
+	}
+	if result.Data.ExitCode != 0 {
+		b.t.Log("Server send command failed")
+		return nil
+	}
+
+	b.t.Log("Sent server command successfully")
 	return nil
 }
 
