@@ -7,6 +7,11 @@ type VMDetailsResponseData struct {
 	Data vmDetailsData `json:"data"`
 }
 
+type VMInstallOSData struct {
+	base_response.BaseResponse
+	Data []string `json:"data"`
+}
+
 type vmDetailsData struct {
 	Mem            int64                       `json:"mem"`
 	Disk           int64                       `json:"disk"`
@@ -88,4 +93,3 @@ type detailsBlockStat struct {
 	RdOperations                int   `json:"rd_operations"`
 	WrOperations                int   `json:"wr_operations"`
 }
-

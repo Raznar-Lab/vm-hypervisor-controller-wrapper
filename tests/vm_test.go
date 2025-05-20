@@ -9,6 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	IMG_URL = "http://s3.raznar.net/raznar-vm-images/rocky/rocky-8-10-cloud-amd64.img"
+)
 type VMTest struct {
 	BaseTest
 }
@@ -29,6 +32,7 @@ func (b VMTest) Start() (err error) {
 		{"Create OS Disk", b.createOsDisk},
 		{"Create Second Disk", b.createSecondDisk},
 		{"Install OS", b.installOS},
+		{"Check Install OS", b.getInstallOS},
 		{"Increase Second Disk Size", b.increaseSecondDiskSize},
 		{"Resize OS Disk", b.resizeOsDisk},
 		{"Switch Boot to Second", b.switchToOSTOSecond},
@@ -49,6 +53,9 @@ func (b VMTest) Start() (err error) {
 	}
 
 	defer func() {
+		b.t.Logf("Deleting server in one minute.")
+		time.Sleep(1 * time.Minute)
+		b.wrapper.VM().ForceStop(uuidStr)
 		if deleteErr := b.deleteServer(vmService, uuidStr); deleteErr != nil {
 			b.t.Logf("Error deleting server: %v", deleteErr)
 		}
@@ -122,7 +129,8 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Installing OS on server:", uuidStr)
 	success, err := vmService.InstallOS(uuidStr, vm_request.VMInstallOSRequestData{
-		ImageFile: "debian-12-amd64.qcow2",
+		ImageURL: IMG_URL,
+		MacAddr:  "02:00:00:a7:47:b6",
 	})
 
 	if err != nil {
@@ -133,6 +141,36 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 		b.t.Log("OS installation failed")
 		return nil
 	}
+	b.t.Log("OS installed successfully")
+	return nil
+}
+
+func (b VMTest) getInstallOS(vmService *vm.VMService, uuidStr string) (err error) {
+	time.Sleep(100 * time.Millisecond)
+	b.t.Log("Getting OS Status on server:", uuidStr)
+	if err != nil {
+		b.t.Logf("Error installing OS: %v", err)
+		return err
+	}
+
+	for {
+		time.Sleep(5 * time.Second)
+
+		res, err := vmService.GetInstallOS(uuidStr)
+		if err != nil {
+			b.t.Logf("Error getting OS Installation status: %v", err)
+			return err
+		}
+
+		if res.Code == 200 {
+			b.t.Logf("Last update status: %s", res.Data[len(res.Data)-1])
+		} else if res.Code == 204 {
+			break
+		} else {
+			break
+		}
+	}
+
 	b.t.Log("OS installed successfully")
 	return nil
 }
@@ -180,7 +218,7 @@ func (b VMTest) resizeOsDisk(vmService *vm.VMService, uuidStr string) (err error
 	b.t.Log("Resizing OS disk for server:", uuidStr)
 	success, err := vmService.ResizeDiskSize(uuidStr, vm_request.VMResizeDiskSize{
 		Label: "os",
-		Size:  10,
+		Size:  15,
 	})
 
 	if err != nil {
@@ -252,10 +290,10 @@ func (b VMTest) linkDisks(vmService *vm.VMService, uuidStr string) (err error) {
 func (b VMTest) switchToRecoveryMode(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Switching boot mode to recovery on server:", uuidStr)
 	success, err := vmService.SwitchBootMode(uuidStr, vm_request.VMBootModeRequestData{
-		BootDiskLabel:       "os",
-		BootMode:            "recovery",
-		BootRecoveryImage:   "debian-12-amd64.qcow2",
-		BootRecoveryStorage: "local",
+		BootDiskLabel:        "os",
+		BootMode:             "recovery",
+		BootRecoveryImageURL: IMG_URL,
+		BootRecoveryStorage:  "local",
 	})
 
 	if err != nil {

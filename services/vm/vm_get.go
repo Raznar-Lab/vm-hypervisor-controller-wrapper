@@ -8,6 +8,28 @@ import (
 	"github.com/Raznar-Lab/vm-hypervisor-controller-wrapper/pkg/constants"
 )
 
+func (s VMService) GetInstallOS(uuid string) (resData *vm_response.VMInstallOSData, err error) {
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_GET, fmt.Sprintf("%s/%s/install-os", constants.ROUTE_VM, uuid), nil)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+
+	resData = &vm_response.VMInstallOSData{}
+	err = json.NewDecoder(res.Body).Decode(resData)
+	if err != nil {
+		resData = nil
+		return
+	}
+
+	return
+}
+
 func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsResponseData, err error) {
 	r, err := s.NewHttpRequest(constants.HTTP_METHOD_GET, fmt.Sprintf("%s/%s", constants.ROUTE_VM, uuid), nil)
 	if err != nil {
