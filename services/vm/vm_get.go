@@ -30,6 +30,24 @@ func (s VMService) GetInstallOS(uuid string) (resData *vm_response.VMInstallOSDa
 	return
 }
 
+func (s VMService) IsQMAgentReady(uuid string) (v bool, err error) {
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_GET, fmt.Sprintf("%s/%s/agent-ready", constants.ROUTE_VM, uuid), nil)
+	if err != nil {
+		return
+
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+	
+	defer res.Body.Close()
+
+	v = res.StatusCode == constants.HTTP_STATUS_NO_CONTENT.Integer()
+	return
+}
+
 func (s VMService) GetDetails(uuid string) (resData *vm_response.VMDetailsResponseData, err error) {
 	r, err := s.NewHttpRequest(constants.HTTP_METHOD_GET, fmt.Sprintf("%s/%s", constants.ROUTE_VM, uuid), nil)
 	if err != nil {

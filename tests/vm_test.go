@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -10,8 +11,10 @@ import (
 )
 
 const (
-	IMG_URL = "http://s3.raznar.net/raznar-vm-images/rocky/rocky-8-10-cloud-amd64.img"
+	IMG_URL        = "http://s3.raznar.net/raznar-vm-images/debian/debian-12-cloud-amd64.img"
+	STORAGE_TARGET = "vz2"
 )
+
 type VMTest struct {
 	BaseTest
 }
@@ -39,16 +42,16 @@ func (b VMTest) Start() (err error) {
 		{"Switch Boot to Primary", b.switchToOSBootMode},
 		{"Delete Second Disk", b.deleteSecondDisk},
 		{"Link Disks", b.linkDisks},
-		{"Switch to Recovery Mode", b.switchToRecoveryMode},
-		{"Switch to OS Boot Mode", b.switchToOSBootMode},
 		{"Get Details", b.getDetails},
 		{"Start Server", b.start},
-		{"Reset Password", b.resetPassword},
-		{"Setup Network", b.setupNetwork},
 		{"Send Command", b.sendCommand},
+		{"Setup Network", b.setupNetwork},
+		{"Reset Password", b.resetPassword},
 		{"Restart Server", b.restart},
 		{"Suspend Server", b.suspend},
 		{"Unsuspend Server", b.unsuspend},
+		{"Switch to Recovery Mode", b.switchToRecoveryMode},
+		{"Switch to OS Boot Mode", b.switchToOSBootMode},
 		{"Stop Server", b.stop},
 	}
 
@@ -198,7 +201,7 @@ func (b VMTest) createOsDisk(vmService *vm.VMService, uuidStr string) (err error
 	b.t.Log("Creating OS disk for server:", uuidStr)
 	success, err := vmService.CreateDisk(uuidStr, vm_request.VMCreateDisk{
 		Size:          5,
-		StorageTarget: "local",
+		StorageTarget: STORAGE_TARGET,
 		Label:         "os",
 	})
 
@@ -237,7 +240,7 @@ func (b VMTest) createSecondDisk(vmService *vm.VMService, uuidStr string) (err e
 	b.t.Log("Creating second disk for server:", uuidStr)
 	success, err := vmService.CreateDisk(uuidStr, vm_request.VMCreateDisk{
 		Size:          5,
-		StorageTarget: "local",
+		StorageTarget: STORAGE_TARGET,
 		Label:         "second",
 	})
 
@@ -293,7 +296,7 @@ func (b VMTest) switchToRecoveryMode(vmService *vm.VMService, uuidStr string) (e
 		BootDiskLabel:        "os",
 		BootMode:             "recovery",
 		BootRecoveryImageURL: IMG_URL,
-		BootRecoveryStorage:  "local",
+		BootRecoveryStorage:  STORAGE_TARGET,
 	})
 
 	if err != nil {
@@ -363,6 +366,28 @@ func (b VMTest) getDetails(vmService *vm.VMService, uuidStr string) (err error) 
 func (b VMTest) resetPassword(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(200 * time.Millisecond)
 	b.t.Log("Resetting password for server:", uuidStr)
+	for i := range 10 {
+		b.t.Log("Waiting for QMAgent to be ready...")
+		isUp, err := vmService.IsQMAgentReady(uuidStr)
+		if err != nil {
+			b.t.Logf("Error checking QMAgent readiness: %v", err)
+		}
+
+		if isUp {
+			break
+		}
+
+		// last loop
+		if i == 9 {
+			b.t.Log("QMAgent is not ready after 10 attempts, failing setup.")
+			err = fmt.Errorf("QMAgent is not ready after 10 attempts")
+			return err
+		}
+
+		b.t.Log("QMAgent is not ready, retrying...")
+		time.Sleep(time.Minute)
+	}
+
 	resData, err := vmService.ResetPassword(uuidStr, vm_request.VMResetPasswordRequestData{
 		OSType: "linux",
 	})
@@ -379,7 +404,27 @@ func (b VMTest) resetPassword(vmService *vm.VMService, uuidStr string) (err erro
 func (b VMTest) setupNetwork(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Setting up network for server:", uuidStr)
 
-	time.Sleep(200 * time.Millisecond) // Add a delay to ensure the VM is ready for network setup.
+	for i := 0; i < 10; i++ {
+		b.t.Log("Waiting for QMAgent to be ready...")
+		isUp, err := vmService.IsQMAgentReady(uuidStr)
+		if err != nil {
+			b.t.Logf("Error checking QMAgent readiness: %v", err)
+		}
+
+		if isUp {
+			break
+		}
+
+		// last loop
+		if i == 9 {
+			b.t.Log("QMAgent is not ready after 10 attempts, failing setup.")
+			err = fmt.Errorf("QMAgent is not ready after 10 attempts")
+			return err
+		}
+
+		b.t.Log("QMAgent is not ready, retrying...")
+		time.Sleep(time.Minute)
+	}
 
 	success, err := vmService.SetupNetwork(uuidStr, vm_request.VMSetupNetworkRequestData{
 		OSType:     "linux",             // Example OS type; update as needed
@@ -511,6 +556,27 @@ func (b VMTest) deleteServer(vmService *vm.VMService, uuidStr string) (err error
 
 func (b VMTest) sendCommand(vmService *vm.VMService, uuidStr string) (err error) {
 	b.t.Log("Sending command:", uuidStr)
+	for i := range 10 {
+		b.t.Log("Waiting for QMAgent to be ready...")
+		isUp, err := vmService.IsQMAgentReady(uuidStr)
+		if err != nil {
+			b.t.Logf("Error checking QMAgent readiness: %v", err)
+		}
+
+		if isUp {
+			break
+		}
+
+		// last loop
+		if i == 9 {
+			b.t.Log("QMAgent is not ready after 10 attempts, failing setup.")
+			err = fmt.Errorf("QMAgent is not ready after 10 attempts")
+			return err
+		}
+
+		b.t.Log("QMAgent is not ready, retrying...")
+		time.Sleep(time.Minute)
+	}
 	time.Sleep(500 * time.Millisecond)
 	result, err := vmService.SendCommand(uuidStr, vm_request.VMSendCommandRequestData{
 		Command: []string{"echo anjay anjay"},
