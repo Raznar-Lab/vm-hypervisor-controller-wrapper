@@ -50,9 +50,9 @@ func (b VMTest) Start() (err error) {
 		{"Restart Server", b.restart},
 		{"Suspend Server", b.suspend},
 		{"Unsuspend Server", b.unsuspend},
+		{"Stop Server", b.stop},
 		{"Switch to Recovery Mode", b.switchToRecoveryMode},
 		{"Switch to OS Boot Mode", b.switchToOSBootMode},
-		{"Stop Server", b.stop},
 	}
 
 	defer func() {
@@ -151,10 +151,6 @@ func (b VMTest) installOS(vmService *vm.VMService, uuidStr string) (err error) {
 func (b VMTest) getInstallOS(vmService *vm.VMService, uuidStr string) (err error) {
 	time.Sleep(100 * time.Millisecond)
 	b.t.Log("Getting OS Status on server:", uuidStr)
-	if err != nil {
-		b.t.Logf("Error installing OS: %v", err)
-		return err
-	}
 
 	for {
 		time.Sleep(5 * time.Second)
