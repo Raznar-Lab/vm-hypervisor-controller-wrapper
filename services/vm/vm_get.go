@@ -20,8 +20,9 @@ func (s VMService) GetInstallOS(uuid string) (resData *vm_response.VMInstallOSDa
 	}
 	defer res.Body.Close()
 
-	if resData != nil {
-		resData = &vm_response.VMInstallOSData{}
+	resData = &vm_response.VMInstallOSData{}
+	resData.Code = res.StatusCode
+	if res.Body != nil {
 		err = json.NewDecoder(res.Body).Decode(resData)
 		if err != nil {
 			resData = nil
