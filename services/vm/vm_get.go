@@ -20,11 +20,13 @@ func (s VMService) GetInstallOS(uuid string) (resData *vm_response.VMInstallOSDa
 	}
 	defer res.Body.Close()
 
-	resData = &vm_response.VMInstallOSData{}
-	err = json.NewDecoder(res.Body).Decode(resData)
-	if err != nil {
-		resData = nil
-		return
+	if resData != nil {
+		resData = &vm_response.VMInstallOSData{}
+		err = json.NewDecoder(res.Body).Decode(resData)
+		if err != nil {
+			resData = nil
+			return
+		}
 	}
 
 	return
@@ -41,7 +43,7 @@ func (s VMService) IsQMAgentReady(uuid string) (v bool, err error) {
 	if err != nil {
 		return
 	}
-	
+
 	defer res.Body.Close()
 
 	v = res.StatusCode == constants.HTTP_STATUS_NO_CONTENT.Integer()
