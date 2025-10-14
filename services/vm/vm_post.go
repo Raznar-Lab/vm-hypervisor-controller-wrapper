@@ -40,7 +40,6 @@ func (s VMService) SendCommand(uuid string, data vm_request.VMSendCommandRequest
 		return
 	}
 
-	
 	err = json.NewDecoder(res.Body).Decode(&resultData)
 	if err != nil {
 		return
@@ -212,6 +211,49 @@ func (s VMService) ForceStop(uuid string) (success bool, err error) {
 
 func (s VMService) Suspend(uuid string) (success bool, err error) {
 	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/suspend", constants.ROUTE_VM, uuid), nil)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	err = s.HandleErrorResponseNonBody(res, constants.HTTP_STATUS_NO_CONTENT.Integer())
+	if err != nil {
+		return false, err
+	}
+
+	success = true
+	return
+}
+
+func (s VMService) EnableVNC(uuid string) (resData *vm_response.VMEnableVNCResponseData, err error) {
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/enable-vnc", constants.ROUTE_VM, uuid), nil)
+	if err != nil {
+		return
+	}
+
+	res, err := s.Client.Do(r)
+	if err != nil {
+		return
+	}
+
+	resData = &vm_response.VMEnableVNCResponseData{}
+	err = json.NewDecoder(res.Body).Decode(resData)
+	if err != nil {
+		resData = nil
+		return
+	}
+
+	err = s.HandleErrorResponse(&resData.BaseResponse, constants.HTTP_STATUS_OK.Integer())
+
+	return
+}
+
+func (s VMService) DisableVNC(uuid string) (success bool, err error) {
+	r, err := s.NewHttpRequest(constants.HTTP_METHOD_POST, fmt.Sprintf("%s/%s/disable-vnc", constants.ROUTE_VM, uuid), nil)
 	if err != nil {
 		return
 	}
