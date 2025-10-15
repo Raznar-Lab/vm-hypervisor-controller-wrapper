@@ -424,7 +424,7 @@ func (b VMTest) setupNetwork(vmService *vm.VMService, uuidStr string) (err error
 
 	success, err := vmService.SetupNetwork(uuidStr, vm_request.VMSetupNetworkRequestData{
 		OSType:     "linux",             // Example OS type; update as needed
-		IPv4:       "192.168.1.100",     // Example IP address
+		IP:         "192.168.1.100",     // Example IP address
 		IpCIDR:     "24",                // Example subnet CIDR
 		Gateway:    "192.168.1.1",       // Example gateway
 		DNS1:       "1.1.1.1",           // Primary DNS
